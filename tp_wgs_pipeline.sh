@@ -235,7 +235,7 @@ Rscript --vanilla tp_generate_consensus.R sampname=\"$sampname\" ref=\"NC_021508
 #Annotate
 printf "\n\nAnnotating with prokka ... \n\n\n"
 mkdir -p ./annotations_prokka
-prokka --outdir './annotations_prokka/'$sampname'/' --force --kingdom 'Bacteria' --genus 'Treponema' --usegenus './annotations_prokka/'$sampname/*.fa
+prokka --outdir './annotations_prokka/'$sampname'/' --force --kingdom 'Bacteria' --genus 'Treponema' --usegenus --prefix $sampname './annotations_prokka/'$sampname/*.fa
 
 
 #Clean up some files
