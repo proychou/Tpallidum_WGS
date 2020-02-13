@@ -35,7 +35,7 @@ if(length(args)==0){
 # ref='NC_016842' 
   
 #First import scaffolds and filter by length (>200) and coverage (>10x)
-scaffname=paste0('/fh/fast/jerome_k/Tpallidum/contigs/',sampname,'/scaffolds.fasta')
+scaffname=paste0('./contigs/',sampname,'/scaffolds.fasta')
 contigs<-readDNAStringSet(scaffname,format='fasta')
 contigs<-contigs[width(contigs)>200]
 cov<-unlist(lapply(names(contigs),function(x)
