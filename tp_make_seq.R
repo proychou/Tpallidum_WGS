@@ -35,21 +35,25 @@ if(length(args)==0){
 # ref='NC_016842' 
   
 #First import scaffolds and filter by length (>200) and coverage (>10x)
-scaffname=paste0('./contigs/',sampname,'/scaffolds.fasta')
+# scaffname=paste0('./contigs/',sampname,'/scaffolds.fasta')
+scaffname=paste0('./contigs/',sampname,'/assembly.fasta'); #with unicycler
 contigs<-readDNAStringSet(scaffname,format='fasta')
 contigs<-contigs[width(contigs)>200]
-cov<-unlist(lapply(names(contigs),function(x)
-  as.numeric(strsplit(x,'_cov_')[[1]][2])))
-contigs<-contigs[cov>10]
-scaffname_filtered<-gsub('scaffolds.fasta','scaffolds_filtered.fasta',scaffname)
+# cov<-unlist(lapply(names(contigs),function(x)
+#   as.numeric(strsplit(x,'_cov_')[[1]][2])))
+# contigs<-contigs[cov>10]
+scaffname_filtered<-gsub('assembly.fasta','scaffolds_filtered.fasta',scaffname)
 writeXStringSet(contigs,scaffname_filtered)
 
 reffname<-paste0('./refs/',ref,'.fasta');
 
 #Call bwa mem to align contigs against reference
-samfname<-gsub('scaffolds.fasta',
-               paste0(sampname,'_aligned_scaffolds_',strsplit(basename(reffname),'.fasta')[[1]][1],'.sam'),
-               scaffname)
+# samfname<-gsub('scaffolds.fasta',
+#                paste0(sampname,'_aligned_scaffolds_',strsplit(basename(reffname),'.fasta')[[1]][1],'.sam'),
+#                scaffname)
+samfname<-gsub('assembly.fasta',
+							 paste0(sampname,'_aligned_scaffolds_',strsplit(basename(reffname),'.fasta')[[1]][1],'.sam'),
+							 scaffname)
 print(paste('Aligning contigs to reference',basename(reffname),'...'))
 system(paste('bwa mem', reffname, scaffname_filtered, '>', samfname))
 
