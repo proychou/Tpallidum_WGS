@@ -15,6 +15,7 @@
 # module load R/3.6.1-foss-2016b-fh1
 # module load prokka/1.13-foss-2016b-BioPerl-1.7.0
 # module load parallel/20170222-foss-2016b
+# module load BLAST+/2.7.1-foss-2016b
 # wget https://github.com/tseemann/prokka/raw/master/binaries/linux/tbl2asn -O $HOME/.local/bin/tbl2asn
 
 #### One time: First build reference for bowtie and make a copy of the ref seqs ####
@@ -139,10 +140,9 @@ rm './mapped_reads/'$sampname'.bam'
 #Assemble with SPAdes 
 printf "\n\nStarting de novo assembly ... \n\n\n"
 mkdir -p './contigs/'$sampname
-spades.py -1 './preprocessed_fastq/'$sampname'_preprocessed_paired_r1.fastq.gz' -2 './preprocessed_fastq/'$sampname'_preprocessed_paired_r2.fastq.gz' -o './contigs/'$sampname --careful -t ${SLURM_CPUS_PER_TASK}
+# spades.py -1 './preprocessed_fastq/'$sampname'_preprocessed_paired_r1.fastq.gz' -2 './preprocessed_fastq/'$sampname'_preprocessed_paired_r2.fastq.gz' -o './contigs/'$sampname --careful -t ${SLURM_CPUS_PER_TASK}
 
-#Delete some spades folders to free up space
-rm -r './contigs/'$sampname'/corrected' 
+~/Unicycler/unicycler-runner.py -1 './preprocessed_fastq/'$sampname'_preprocessed_paired_r1.fastq.gz' -2 './preprocessed_fastq/'$sampname'_preprocessed_paired_r2.fastq.gz' -o ./contigs/$sampname/ -t ${SLURM_CPUS_PER_TASK} --pilon_path ~/pilon-1.23.jar
 
 
 
