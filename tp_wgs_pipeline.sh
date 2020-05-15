@@ -151,6 +151,8 @@ else
 if [[ $paired == "false" ]]
 then
 
+sampname=$(basename ${in_fastq%%_R1*.fastq*})
+
 if [ -z $in_fastq ]
 then
 echo "Missing input argument."
@@ -173,18 +175,15 @@ rm $tmp_fastq
 
   
 #Quality trimming
-if [[ $qual_trim == "true" ]]
-then
 printf "\n\nQuality trimming ... \n\n\n"
 mkdir -p ./preprocessed_fastq
 processed_fastq_old=$processed_fastq
 processed_fastq='./preprocessed_fastq/'$sampname'_preprocessed.fastq.gz'
 
 bbduk.sh in=$processed_fastq_old out=$processed_fastq t=$SLURM_CPUS_PER_TASK qtrim=rl trimq=20 maq=10 overwrite=TRUE minlen=20
-fi
 
 
-#Use bbduk to filter reads that match Tp genomes
+#Use bbduk to filter reads that match Tp genomes ## not tested for single-end!
 if [[ $filter == "true" ]]
 then
 printf "\n\nK-mer filtering using Tp_refs.fasta ... \n\n\n"
@@ -206,7 +205,7 @@ fi
 #FastQC report on processed reads
 printf "\n\nFastQC report on preprocessed reads ... \n\n\n"
 mkdir -p ./fastqc_reports_preprocessed
-fastqc -o ./fastqc_reports_preprocessed -t $SLURM_CPUS_PER_TASK $processed_fastq
+fastqc -o ./fastqc_reports_preprocessed -t $SLURM_CPUS_PER_TASK './preprocessed_fastq/'$sampname'_preprocessed.fastq.gz'
 
 
 #Map reads to reference
@@ -232,11 +231,6 @@ spades.py -s $processed_fastq -o './contigs/'$sampname --careful -t ${SLURM_CPUS
 
 fi
 fi
-
-
-fi
-fi
-
 
 
 # Now call an R script that merges assembly and mapping and ultimately makes the consensus sequence 
