@@ -242,8 +242,20 @@ printf "\n\nRe-mapping reads to assembled sequence ... \n\n\n"
 mkdir -p ./remapped_reads
 ref='NC_021508'
 bowtie2-build -q './ref_for_remapping/'$sampname'_aligned_scaffolds_'$ref'_consensus.fasta' './ref_for_remapping/'$sampname'_aligned_scaffolds_'$ref
+
+if [[ $paired == "true" ]]
+then
 bowtie2 -x './ref_for_remapping/'$sampname'_aligned_scaffolds_'$ref -1 './preprocessed_fastq/'$sampname'_preprocessed_paired_r1.fastq.gz' -2 './preprocessed_fastq/'$sampname'_preprocessed_paired_r2.fastq.gz' -p ${SLURM_CPUS_PER_TASK} | samtools view -bS - > './remapped_reads/'$sampname'.bam'
 samtools sort -o './remapped_reads/'$sampname'.sorted.bam' './remapped_reads/'$sampname'.bam'
+fi
+
+if [[ $paired == "false" ]]
+then
+bowtie2 -x './ref_for_remapping/'$sampname'_aligned_scaffolds_'$ref -U './preprocessed_fastq/'$sampname'_preprocessed.fastq.gz' -p ${SLURM_CPUS_PER_TASK} | samtools view -bS - > './remapped_reads/'$sampname'.bam'
+samtools sort -o './remapped_reads/'$sampname'.sorted.bam' './remapped_reads/'$sampname'.bam'
+fi
+
+
 rm './remapped_reads/'$sampname'.bam'
 mv './remapped_reads/'$sampname'.sorted.bam' './remapped_reads/'$sampname'.bam' 
 
